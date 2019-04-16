@@ -1,14 +1,11 @@
-# gists - WARNING: PUBLIC REPO
-...because org based gists isn't a thing on github :(
-
-Please don't add any sensitive data in here.
+# gists
 
 Great centralized place to put in tidbits of scripts that can be ran from anywhere:
 
-* **Bash** using `source <(curl -s https://raw.githubusercontent.com/PageUpPeopleOrg/gists/master/YOUR-SCRIPT-HERE.sh)`
-* **Powershell** using `iex ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/PageUpPeopleOrg/gists/master/YOUR-SCRIPT-HERE.ps1'))`
+* **Bash** using `source <(curl -s https://raw.githubusercontent.com/mboudreau/gists/master/YOUR-SCRIPT-HERE.sh)`
+* **Powershell** using `iex ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/mboudreau/gists/master/YOUR-SCRIPT-HERE.ps1'))`
 
-To have these scripts referenced locally for the specific user, run `echo "source <(curl -s https://raw.githubusercontent.com/PageUpPeopleOrg/gists/master/YOUR-SCRIPT-HERE.sh)" > ~/.local/bin/YOUR-SCRIPT-HERE.sh; chmod +x ~/.local/bin/YOUR-SCRIPT-HERE.sh`.
+To have these scripts referenced locally for the specific user, run `echo "source <(curl -s https://raw.githubusercontent.com/mboudreau/gists/master/YOUR-SCRIPT-HERE.sh)" > ~/.local/bin/YOUR-SCRIPT-HERE.sh; chmod +x ~/.local/bin/YOUR-SCRIPT-HERE.sh`.
 
 ### install-hashicorp
 
@@ -29,3 +26,9 @@ All information is stored in the [default AWS config/credential location](https:
 
 Connects to an RDP session for Linux/Mac using [xfreerdp2](https://launchpad.net/~remmina-ppa-team/+archive/ubuntu/remmina-next).
 Simply run `./rdp [IP]<:PORT>`, it will prompt you for your username and password, or you can set them inline by using the option `-u <username> -p <password>`.
+
+### install-p4merge-git
+
+Install p4merge, the best god damn diff/merge tool out there, and configures git to use it as the default if git is available.  Installs the latest version (after some discovery) if none is specified.
+
+`./install-p4merge-git.sh <version>`

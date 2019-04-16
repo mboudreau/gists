@@ -145,7 +145,6 @@ echo "${BOLD}${APPLICATION} ${VERSION}${RESET} has been successfully installed."
 # Check if git is available
 if ! [ -x "$(command -v git)" ]; then
   echo "${YELLOW}Git is not installed, skipping setting ${APPLICATION} as diff/merge tool.${RESET}"
-  exit 1
 else
   echo "Setting up ${APPLICATION} as merge and diff tool in git..."
   git config --global merge.tool p4merge
