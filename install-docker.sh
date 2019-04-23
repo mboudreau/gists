@@ -41,7 +41,7 @@ fi
 
 echo "${YELLOW}Trying to install docker version ${VERSION}${RESET}"
 
-sudo apt-get install apt-transport-https ca-certificates curl gnupg-agent software-properties-common -y > /dev/null
+sudo apt-get install apt-transport-https ca-certificates curl gnupg-agent software-properties-common jq -y > /dev/null
 curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add - > /dev/null
 sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" -y > /dev/null
 sudo apt-get update > /dev/null
@@ -59,3 +59,16 @@ sudo groupadd docker
 sudo usermod -aG docker $USER
 
 echo "${BOLD}Docker added to user '${USER}', but you must log out and log back in to be able to use docker without sudo.${RESET}"
+
+echo "Installing docker-compose..."
+
+VERSION=`curl -s -H "Accept: application/vnd.github.v3+json" https://api.github.com/repos/docker/compose/releases/latest | jq -r '.tag_name'`
+sudo curl -L https://github.com/docker/compose/releases/download/${VERSION}/docker-compose-`uname -s`-`uname -m` -o /usr/local/bin/docker-compose
+sudo chmod +x /usr/local/bin/docker-compose
+
+if ! [ -x "$(command -v docker-compose)" ]; then
+  echo "${RED}Docker-compose did not install correctly.${RESET}"
+  exit 1
+fi
+
+echo "${BOLD}${GREEN}Docker-compose version ${VERSION} installed successfully.${RESET}"
