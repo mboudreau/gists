@@ -3,7 +3,6 @@
 Great centralized place to put in tidbits of scripts that can be ran from anywhere:
 
 * **Bash** using `source <(curl -s https://raw.githubusercontent.com/mboudreau/gists/master/YOUR-SCRIPT-HERE.sh)`
-* **Powershell** using `iex ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/mboudreau/gists/master/YOUR-SCRIPT-HERE.ps1'))`
 
 To have these scripts referenced locally for the specific user, run `echo "source <(curl -s https://raw.githubusercontent.com/mboudreau/gists/master/YOUR-SCRIPT-HERE.sh)" > ~/.local/bin/YOUR-SCRIPT-HERE.sh; chmod +x ~/.local/bin/YOUR-SCRIPT-HERE.sh`.
 
