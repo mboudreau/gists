@@ -35,16 +35,17 @@ while getopts "h:v:d:a:b:" opt; do
 done
 shift $((OPTIND-1))
 
+sudo apt-get install apt-transport-https ca-certificates curl gnupg-agent software-properties-common jq -y > /dev/null
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add - > /dev/null
+sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" -y > /dev/null
+sudo apt-get update > /dev/null
+
 if [ -z "${VERSION}" ] || [ "${VERSION}" == "latest" ]; then
   VERSION=`apt-cache --quiet=0 policy docker-ce 2>&1 | sed -E -n "s/\s*Candidate: (.*)/\1/p"`
 fi
 
 echo "${YELLOW}Trying to install docker version ${VERSION}${RESET}"
 
-sudo apt-get install apt-transport-https ca-certificates curl gnupg-agent software-properties-common jq -y > /dev/null
-curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add - > /dev/null
-sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" -y > /dev/null
-sudo apt-get update > /dev/null
 sudo apt-get install docker-ce=${VERSION} docker-ce-cli=${VERSION} containerd.io -y > /dev/null
 
 
