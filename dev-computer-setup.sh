@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+set -e
 
 BOLD=`tput bold`
 RED=`tput setaf 1`
@@ -6,7 +7,7 @@ GREEN=`tput setaf 2`
 YELLOW=`tput setaf 3`
 RESET=`tput sgr0`
 
-AVAILABLE_STEPS=(dist-upgrade install-prerequisite add-ppa apt-install snap-install)
+declare -a AVAILABLE_STEPS=("dist-upgrade" "install-prerequisite" "add-ppa" "apt-install" "snap-install")
 
 function show_help {
     echo "${BOLD}Development Computer Setup Script${RESET} - Must be ran as sudo to work"
@@ -43,14 +44,14 @@ while getopts "h:v:d:a:b:" opt; do
 done
 shift $((OPTIND-1))
 
-STEPS=( "$@" )
+declare -a STEPS=( "$@" )
 
 # Are steps specified?
 if [[ -z "${STEPS}" ]]; then
-    echo "${YELLOW}No steps specified, running through all of them: $AVAILABLE_STEPS[@] ${RESET}"
-    STEPS=( "$AVAILABLE_STEPS[@]" )
+    echo "${YELLOW}No steps specified, running through all of them: ${AVAILABLE_STEPS[@]} ${RESET}"
+    STEPS=( "${AVAILABLE_STEPS[@]}" )
 else
-    echo "${YELLOW}Running through specified steps: $STEPS[@] ${RESET}"
+    echo "${YELLOW}Running through specified steps: ${STEPS[@]} ${RESET}"
     for step in "${STEPS[@]}"
     do
         if [[ ! $STEPS =~ (^| )$step($| ) ]]; then
@@ -59,12 +60,6 @@ else
         fi
     done
 fi
-
-for step in "${STEPS[@]}"
-do
-    # Call function of the step name
-    ${step}
-done
 
 function dist-upgrade {
     apt-get update
@@ -90,7 +85,7 @@ function add-ppa {
     echo "${YELLOW}Adding PPAs...${RESET}"
 
     # DOCKER
-    curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add -
+    curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
     add-apt "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
 
     # CHROME
@@ -141,16 +136,22 @@ function apt-install {
 }
 
 function snap-install {
-    snap install --stable \
-        slack \
-        postman \
-        webstorm \
-        intellij-idea-community \
-        sublime-text \
-        ngrok \
-        node
+    snap install postman
+    snap install ngrok
+    snap install --classic slack
+    snap install --classic webstorm
+    snap install --classic intellij-idea-community
+    snap install --classic sublime-text
+    snap install --classic node --channel=10/stable
 }
 
 function add-apt {
-    add-apt-repository -y $@
+    add-apt-repository -y "$@"
 }
+
+for step in "${STEPS[@]}"
+do
+    # Call function of the step name
+    $step
+done
+
