@@ -7,7 +7,7 @@ GREEN=`tput setaf 2`
 YELLOW=`tput setaf 3`
 RESET=`tput sgr0`
 
-declare -a AVAILABLE_STEPS=("dist-upgrade" "install-prerequisite" "add-ppa" "apt-install" "snap-install")
+declare -a AVAILABLE_STEPS=("install-prerequisite" "add-ppa" "apt-install" "snap-install" "dist-upgrade")
 
 function show_help {
     echo "${BOLD}Development Computer Setup Script${RESET} - Must be ran as sudo to work"
@@ -109,6 +109,9 @@ function add-ppa {
 
     # LIBRE OFFICE
     add-apt ppa:libreoffice/ppa
+
+    # OIBAF VIDEO DRIVERS
+    add-apt ppa:oibaf/graphics-drivers
 
     echo "${GREEN}PPAs added.${RESET}"
 }
