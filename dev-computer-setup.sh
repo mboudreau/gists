@@ -76,7 +76,10 @@ function install-prerequisite {
         curl \
         wget \
         gnupg-agent \
-        software-properties-common
+        software-properties-common \
+        gcc \
+        g++ \
+        make
 
     echo "${GREEN}Prerequisite dependencies installed.${RESET}"
 }
@@ -85,12 +88,12 @@ function add-ppa {
     echo "${YELLOW}Adding PPAs...${RESET}"
 
     # DOCKER
-    curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
-    add-apt "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+    curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add -
+    add-apt-string docker "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
 
     # CHROME
     wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add -
-    add-apt "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main"
+    add-apt-string google-chrome "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main"
 
     # FIREFOX
     add-apt ppa:mozillateam/ppa
@@ -113,6 +116,14 @@ function add-ppa {
     # OIBAF VIDEO DRIVERS
     add-apt ppa:oibaf/graphics-drivers
 
+    # NODE & NPM & YARN
+    curl -sL https://deb.nodesource.com/setup_10.x | sudo -E bash -
+    curl -sL https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add -
+    add-apt-string yarn "deb https://dl.yarnpkg.com/debian/ stable main"
+    
+    # UPDATE CACHE
+    apt-get update
+
     echo "${GREEN}PPAs added.${RESET}"
 }
 
@@ -133,7 +144,9 @@ function apt-install {
         gimp \
         libreoffice \
         inkscape \
-        vlc
+        vlc \
+        nodejs \
+        yarn
 
     echo "${GREEN}APT packages installed.${RESET}"
 }
@@ -145,13 +158,17 @@ function snap-install {
     snap install --classic webstorm
     snap install --classic intellij-idea-community
     snap install --classic sublime-text
-    snap install --classic node --channel=10/stable
+
+    echo "${GREEN}All Snap packages installed.${RESET}${YELLOW} You might need to logout/login to see the changes.${RESET}"
 }
 
 function add-apt {
-    add-apt-repository -y "$@"
+    add-apt-repository -n -y "$@"
 }
 
+function add-apt-string {
+    echo "$2" | sudo tee /etc/apt/sources.list.d/$1.list
+}
 for step in "${STEPS[@]}"
 do
     # Call function of the step name
