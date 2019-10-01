@@ -2,10 +2,11 @@
 set -e
 
 BOLD=`tput bold`
-RED=`tput setaf 1`
-GREEN=`tput setaf 2`
-YELLOW=`tput setaf 3`
-RESET=`tput sgr0`
+RED=$(tput setaf 1)
+GREEN=$(tput setaf 2)
+YELLOW=$(tput setaf 3)
+RESET=$(tput sgr0)
+RELEASE=$(lsb_release -cs)
 
 declare -a AVAILABLE_STEPS=("install-prerequisite" "add-ppa" "apt-install" "snap-install" "dist-upgrade")
 
@@ -88,11 +89,11 @@ function add-ppa {
     echo "${YELLOW}Adding PPAs...${RESET}"
 
     # DOCKER
-    curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add -
-    add-apt-string docker "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+    add-apt-key https://download.docker.com/linux/ubuntu/gpg
+    add-apt-string docker "deb [arch=amd64] https://download.docker.com/linux/ubuntu $RELEASE stable"
 
     # CHROME
-    wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add -
+    add-apt-key https://dl-ssl.google.com/linux/linux_signing_key.pub
     add-apt-string google-chrome "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main"
 
     # FIREFOX
@@ -117,9 +118,15 @@ function add-ppa {
     add-apt ppa:oibaf/graphics-drivers
 
     # NODE & NPM & YARN
-    curl -sL https://deb.nodesource.com/setup_10.x | sudo -E bash -
-    curl -sL https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add -
+    add-apt-key https://deb.nodesource.com/gpgkey/nodesource.gpg.key
+    echo "deb https://deb.nodesource.com/node_10.x $RELEASE main" > /etc/apt/sources.list.d/node.list
+    add-apt-key https://dl.yarnpkg.com/debian/pubkey.gpg
     add-apt-string yarn "deb https://dl.yarnpkg.com/debian/ stable main"
+
+    # VIRTUALBOX
+    add-apt-key https://www.virtualbox.org/download/oracle_vbox_2016.asc
+    add-apt-key https://www.virtualbox.org/download/oracle_vbox.asc
+    add-apt-string virtualbox "deb http://download.virtualbox.org/virtualbox/debian $RELEASE contrib"
     
     # UPDATE CACHE
     apt-get update
@@ -146,7 +153,10 @@ function apt-install {
         inkscape \
         vlc \
         nodejs \
-        yarn
+        yarn \
+        openssh-server \
+        gnome-tweaks \
+        virtualbox-6.0
 
     echo "${GREEN}APT packages installed.${RESET}"
 }
@@ -166,8 +176,12 @@ function add-apt {
     add-apt-repository -n -y "$@"
 }
 
+function add-apt-key {
+    curl -sL "$@" | sudo apt-key add -
+}
+
 function add-apt-string {
-    echo "$2" | sudo tee /etc/apt/sources.list.d/$1.list
+    echo "$2" | sudo tee "/etc/apt/sources.list.d/$1.list"
 }
 for step in "${STEPS[@]}"
 do
