@@ -8,7 +8,7 @@ YELLOW=$(tput setaf 3)
 RESET=$(tput sgr0)
 RELEASE=$(lsb_release -cs)
 
-declare -a AVAILABLE_STEPS=("install-prerequisite" "add-ppa" "apt-install" "snap-install" "dist-upgrade")
+declare -a AVAILABLE_STEPS=("install-prerequisite" "add-ppa" "apt-install" "snap-install" "dist-upgrade", "configure")
 
 function show_help {
     echo "${BOLD}Development Computer Setup Script${RESET} - Must be ran as sudo to work"
@@ -183,6 +183,13 @@ function add-apt-key {
 function add-apt-string {
     echo "$2" | sudo tee "/etc/apt/sources.list.d/$1.list"
 }
+
+function configure {
+    # Increasing file watchers & restarting system controller
+    echo "fs.inotify.max_user_watches = 524288" > /etc/sysctl.d/90-file-watchers.conf
+    sysctl -p --system
+}
+
 for step in "${STEPS[@]}"
 do
     # Call function of the step name
