@@ -31,3 +31,9 @@ Simply run `./rdp [IP]<:PORT>`, it will prompt you for your username and passwor
 Install p4merge, the best god damn diff/merge tool out there, and configures git to use it as the default if git is available.  Installs the latest version (after some discovery) if none is specified.
 
 `./install-p4merge-git.sh <version>`
+
+### create-timelapse
+
+Creates a timelapse video from a sequence of images.  Must run the script from the working directory where the images reside:
+
+`./create-timelapse.sh`
