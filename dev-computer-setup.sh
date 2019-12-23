@@ -2,12 +2,13 @@
 set -e
 
 BOLD=`tput bold`
-RED=`tput setaf 1`
-GREEN=`tput setaf 2`
-YELLOW=`tput setaf 3`
-RESET=`tput sgr0`
+RED=$(tput setaf 1)
+GREEN=$(tput setaf 2)
+YELLOW=$(tput setaf 3)
+RESET=$(tput sgr0)
+RELEASE=$(lsb_release -cs)
 
-declare -a AVAILABLE_STEPS=("install-prerequisite" "add-ppa" "apt-install" "snap-install" "dist-upgrade")
+declare -a AVAILABLE_STEPS=("install-prerequisite" "add-ppa" "apt-install" "snap-install" "dist-upgrade", "configure")
 
 function show_help {
     echo "${BOLD}Development Computer Setup Script${RESET} - Must be ran as sudo to work"
@@ -76,7 +77,10 @@ function install-prerequisite {
         curl \
         wget \
         gnupg-agent \
-        software-properties-common
+        software-properties-common \
+        gcc \
+        g++ \
+        make
 
     echo "${GREEN}Prerequisite dependencies installed.${RESET}"
 }
@@ -85,12 +89,12 @@ function add-ppa {
     echo "${YELLOW}Adding PPAs...${RESET}"
 
     # DOCKER
-    curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
-    add-apt "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+    add-apt-key https://download.docker.com/linux/ubuntu/gpg
+    add-apt-string docker "deb [arch=amd64] https://download.docker.com/linux/ubuntu $RELEASE stable"
 
     # CHROME
-    wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add -
-    add-apt "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main"
+    add-apt-key https://dl-ssl.google.com/linux/linux_signing_key.pub
+    add-apt-string google-chrome "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main"
 
     # FIREFOX
     add-apt ppa:mozillateam/ppa
@@ -113,6 +117,20 @@ function add-ppa {
     # OIBAF VIDEO DRIVERS
     add-apt ppa:oibaf/graphics-drivers
 
+    # NODE & NPM & YARN
+    add-apt-key https://deb.nodesource.com/gpgkey/nodesource.gpg.key
+    echo "deb https://deb.nodesource.com/node_10.x $RELEASE main" > /etc/apt/sources.list.d/node.list
+    add-apt-key https://dl.yarnpkg.com/debian/pubkey.gpg
+    add-apt-string yarn "deb https://dl.yarnpkg.com/debian/ stable main"
+
+    # VIRTUALBOX
+    add-apt-key https://www.virtualbox.org/download/oracle_vbox_2016.asc
+    add-apt-key https://www.virtualbox.org/download/oracle_vbox.asc
+    add-apt-string virtualbox "deb http://download.virtualbox.org/virtualbox/debian $RELEASE contrib"
+    
+    # UPDATE CACHE
+    apt-get update
+
     echo "${GREEN}PPAs added.${RESET}"
 }
 
@@ -133,7 +151,12 @@ function apt-install {
         gimp \
         libreoffice \
         inkscape \
-        vlc
+        vlc \
+        nodejs \
+        yarn \
+        openssh-server \
+        gnome-tweaks \
+        virtualbox-6.0
 
     echo "${GREEN}APT packages installed.${RESET}"
 }
@@ -145,11 +168,26 @@ function snap-install {
     snap install --classic webstorm
     snap install --classic intellij-idea-community
     snap install --classic sublime-text
-    snap install --classic node --channel=10/stable
+
+    echo "${GREEN}All Snap packages installed.${RESET}${YELLOW} You might need to logout/login to see the changes.${RESET}"
 }
 
 function add-apt {
-    add-apt-repository -y "$@"
+    add-apt-repository -n -y "$@"
+}
+
+function add-apt-key {
+    curl -sL "$@" | sudo apt-key add -
+}
+
+function add-apt-string {
+    echo "$2" | sudo tee "/etc/apt/sources.list.d/$1.list"
+}
+
+function configure {
+    # Increasing file watchers & restarting system controller
+    echo "fs.inotify.max_user_watches = 524288" > /etc/sysctl.d/90-file-watchers.conf
+    sysctl -p --system
 }
 
 for step in "${STEPS[@]}"
