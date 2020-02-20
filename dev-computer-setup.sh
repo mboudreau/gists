@@ -156,7 +156,7 @@ function apt-install {
         yarn \
         openssh-server \
         gnome-tweaks \
-        virtualbox-6.0
+        virtualbox-6.1
 
     echo "${GREEN}APT packages installed.${RESET}"
 }
@@ -164,9 +164,11 @@ function apt-install {
 function snap-install {
     snap install postman
     snap install ngrok
+    snap install --classic dotnet-sdk
     snap install --classic slack
     snap install --classic webstorm
-    snap install --classic intellij-idea-community
+    snap install --classic intellij-idea-ultimate
+    snap install --classic rider
     snap install --classic sublime-text
 
     echo "${GREEN}All Snap packages installed.${RESET}${YELLOW} You might need to logout/login to see the changes.${RESET}"
@@ -188,6 +190,15 @@ function configure {
     # Increasing file watchers & restarting system controller
     echo "fs.inotify.max_user_watches = 524288" > /etc/sysctl.d/90-file-watchers.conf
     sysctl -p --system
+
+    # Adding git config
+    read -p 'Git User Name: ' gitname
+    git config --global user.name "${gitname}"
+    read -p 'Git Email: ' gitemail
+    git config --global user.email "${gitemail}"
+
+    # Adding git alias "all"
+    git config --global alias.all '!f() { ls -R -d */.git | sed 's,\/.git,,' | xargs -P10 -I{} git -C {} $1; }; f'
 }
 
 for step in "${STEPS[@]}"
