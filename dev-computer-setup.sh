@@ -8,7 +8,7 @@ YELLOW=$(tput setaf 3)
 RESET=$(tput sgr0)
 RELEASE=$(lsb_release -cs)
 
-declare -a AVAILABLE_STEPS=("install-prerequisite" "add-ppa" "apt-install" "snap-install" "dist-upgrade", "configure")
+declare -a AVAILABLE_STEPS=("install-prerequisite" "add-ppa" "apt-install" "snap-install" "dist-upgrade" "p4merge" "configure")
 
 function show_help {
     echo "${BOLD}Development Computer Setup Script${RESET} - Must be ran as sudo to work"
@@ -191,6 +191,16 @@ function add-apt-string {
     echo "$2" | sudo tee "/etc/apt/sources.list.d/$1.list"
 }
 
+function p4merge {
+    DOWNLOAD_DIR=~/Downloads
+    P4FILE=$DOWNLOAD_DIR/p4v.tgz
+    P4_INSTALL_DIR=/usr/share/p4v
+    wget -O $P4FILE https://cdist2.perforce.com/perforce/r19.2/bin.linux26x86_64/p4v.tgz
+    tar zxvf $P4FILE -C $DOWNLOAD_DIR
+    sudo cp -r $DOWNLOAD_DIR/p4v-* $P4_INSTALL_DIR/
+    sudo ln -s $P4_INSTALL_DIR/bin/p4merge /usr/bin/p4merge
+}
+
 function configure {
     # Increasing file watchers & restarting system controller
     echo "fs.inotify.max_user_watches = 524288" > /etc/sysctl.d/90-file-watchers.conf
@@ -201,6 +211,14 @@ function configure {
     git config --global user.name "${gitname}"
     read -p 'Git Email: ' gitemail
     git config --global user.email "${gitemail}"
+    
+    # Set git merge config
+    git config --global merge.tool p4merge
+    git config --global diff.tool p4merge
+    git config --global mergetool.keepBackup false
+    git config --global mergetool.keepTemporaries false
+    git config --global mergetool.prompt false
+    git config --global difftool.prompt false
 
     # Adding git alias "all"
     git config --global alias.all '!f() { ls -R -d */.git | sed 's,\/.git,,' | xargs -P10 -I{} git -C {} $1; }; f'
