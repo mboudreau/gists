@@ -119,7 +119,7 @@ function add-ppa {
 
     # NODE & NPM & YARN
     add-apt-key https://deb.nodesource.com/gpgkey/nodesource.gpg.key
-    echo "deb https://deb.nodesource.com/node_10.x $RELEASE main" > /etc/apt/sources.list.d/node.list
+    add-apt-string node "deb https://deb.nodesource.com/node_10.x $RELEASE main"
     add-apt-key https://dl.yarnpkg.com/debian/pubkey.gpg
     add-apt-string yarn "deb https://dl.yarnpkg.com/debian/ stable main"
 
@@ -127,6 +127,10 @@ function add-ppa {
     add-apt-key https://www.virtualbox.org/download/oracle_vbox_2016.asc
     add-apt-key https://www.virtualbox.org/download/oracle_vbox.asc
     add-apt-string virtualbox "deb http://download.virtualbox.org/virtualbox/debian $RELEASE contrib"
+    
+    # BALENA ETCHER
+    add-apt-string etcher "deb https://deb.etcher.io stable etcher"
+    apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 379CE192D401AB61
     
     # UPDATE CACHE
     apt-get update
@@ -156,7 +160,8 @@ function apt-install {
         yarn \
         openssh-server \
         gnome-tweaks \
-        virtualbox-6.1
+        virtualbox-6.1 \
+        balena-etcher-electron
 
     echo "${GREEN}APT packages installed.${RESET}"
 }
