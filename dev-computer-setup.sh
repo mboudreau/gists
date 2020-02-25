@@ -1,14 +1,14 @@
 #!/usr/bin/env bash
 set -e
 
-BOLD=`tput bold`
+BOLD=$(tput bold)
 RED=$(tput setaf 1)
 GREEN=$(tput setaf 2)
 YELLOW=$(tput setaf 3)
 RESET=$(tput sgr0)
 RELEASE=$(lsb_release -cs)
 
-declare -a AVAILABLE_STEPS=("install-prerequisite" "add-ppa" "apt-install" "snap-install" "dist-upgrade" "p4merge" "configure")
+declare -a AVAILABLE_STEPS=("install-prerequisite" "add-ppa" "apt-install" "snap-install" "dist-upgrade" "p4merge" "configure" "install-gnome-modules")
 
 function show_help {
     echo "${BOLD}Development Computer Setup Script${RESET} - Must be ran as sudo to work"
@@ -17,7 +17,7 @@ function show_help {
     echo "Example: sudo ./$(basename $0) add-ppa apt-install"
     echo ""
     echo "By default, this scripts runs all the steps sequentially."
-    echo "You can specify a list of space delimited steps like one of the following: ${AVAILABLE_STEPS[@]}"
+    echo "You can specify a list of space delimited steps like one of the following: ${AVAILABLE_STEPS[*]}"
     echo ""
     echo "${BOLD}Options${RESET}:"
     echo " ${BOLD}-h${RESET}: Help - Show me this helpful message."
@@ -31,7 +31,7 @@ then
 fi
 
 # Gather options from flags.
-while getopts "h:v:d:a:b:" opt; do
+while getopts "h:?:" opt; do
     case "$opt" in
     h)
         show_help
@@ -48,15 +48,16 @@ shift $((OPTIND-1))
 declare -a STEPS=( "$@" )
 
 # Are steps specified?
-if [[ -z "${STEPS}" ]]; then
-    echo "${YELLOW}No steps specified, running through all of them: ${AVAILABLE_STEPS[@]} ${RESET}"
+if [[ -z "${STEPS[*]}" ]]; then
+    echo "${YELLOW}No steps specified, running through all of them: ${AVAILABLE_STEPS[*]} ${RESET}"
     STEPS=( "${AVAILABLE_STEPS[@]}" )
 else
-    echo "${YELLOW}Running through specified steps: ${STEPS[@]} ${RESET}"
+    echo "${YELLOW}Running through specified steps: ${STEPS[*]} ${RESET}"
     for step in "${STEPS[@]}"
     do
-        if [[ ! $STEPS =~ (^| )$step($| ) ]]; then
-            echo "${RED}Step '$step' is not available.  Please use one of the following: $AVAILABLE_STEPS[@]${RESET}"
+        # shellcheck disable=SC2076
+        if [[ ! " ${AVAILABLE_STEPS[*]} " =~ " $step " ]]; then
+            echo "${RED}Step '$step' is not available.  Please use one of the following: ${AVAILABLE_STEPS[*]} ${RESET}"
             exit 1
         fi
     done
@@ -129,8 +130,8 @@ function add-ppa {
     add-apt-string virtualbox "deb http://download.virtualbox.org/virtualbox/debian $RELEASE contrib"
     
     # BALENA ETCHER
-    add-apt-string etcher "deb https://deb.etcher.io stable etcher"
-    apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 379CE192D401AB61
+    # apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 379CE192D401AB61
+    # add-apt-string etcher "deb https://deb.etcher.io stable etcher"
     
     # UPDATE CACHE
     apt-get update
@@ -160,8 +161,8 @@ function apt-install {
         yarn \
         openssh-server \
         gnome-tweaks \
-        virtualbox-6.1 \
-        balena-etcher-electron
+        virtualbox-6.1
+        # balena-etcher-electron
 
     echo "${GREEN}APT packages installed.${RESET}"
 }
@@ -192,13 +193,13 @@ function add-apt-string {
 }
 
 function p4merge {
-    DOWNLOAD_DIR=~/Downloads
+    DOWNLOAD_DIR=/tmp
     P4FILE=$DOWNLOAD_DIR/p4v.tgz
     P4_INSTALL_DIR=/usr/share/p4v
     wget -O $P4FILE https://cdist2.perforce.com/perforce/r19.2/bin.linux26x86_64/p4v.tgz
     tar zxvf $P4FILE -C $DOWNLOAD_DIR
     sudo cp -r $DOWNLOAD_DIR/p4v-* $P4_INSTALL_DIR/
-    sudo ln -s $P4_INSTALL_DIR/bin/p4merge /usr/bin/p4merge
+    sudo ln -f -s $P4_INSTALL_DIR/bin/p4merge /usr/bin/p4merge
 }
 
 function configure {
@@ -207,9 +208,9 @@ function configure {
     sysctl -p --system
 
     # Adding git config
-    read -p 'Git User Name: ' gitname
+    read -rp 'Your Name: ' gitname
     git config --global user.name "${gitname}"
-    read -p 'Git Email: ' gitemail
+    read -rp 'Your Email: ' gitemail
     git config --global user.email "${gitemail}"
     
     # Set git merge config
@@ -222,6 +223,12 @@ function configure {
 
     # Adding git alias "all"
     git config --global alias.all '!f() { ls -R -d */.git | sed 's,\/.git,,' | xargs -P10 -I{} git -C {} $@; }; f'
+}
+
+function install-gnome-modules {
+  echo "Please open the following links with firefox and install gnome modules:"
+  echo "https://extensions.gnome.org/extension/708/panel-osd/"
+  echo "https://extensions.gnome.org/extension/1160/dash-to-panel/"
 }
 
 for step in "${STEPS[@]}"
