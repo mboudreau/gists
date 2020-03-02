@@ -8,7 +8,7 @@ YELLOW=$(tput setaf 3)
 RESET=$(tput sgr0)
 RELEASE=$(lsb_release -cs)
 
-declare -a AVAILABLE_STEPS=("install-prerequisite" "add-ppa" "apt-install" "snap-install" "dist-upgrade" "p4merge" "configure" "install-gnome-modules")
+declare -a AVAILABLE_STEPS=("install-prerequisite" "add-ppa" "apt-install" "snap-install" "dist-upgrade" "p4merge" "zoom" "configure" "install-gnome-modules")
 
 function show_help {
     echo "${BOLD}Development Computer Setup Script${RESET} - Must be ran as sudo to work"
@@ -200,6 +200,14 @@ function p4merge {
     tar zxvf $P4FILE -C $DOWNLOAD_DIR
     sudo cp -r $DOWNLOAD_DIR/p4v-* $P4_INSTALL_DIR/
     sudo ln -f -s $P4_INSTALL_DIR/bin/p4merge /usr/bin/p4merge
+}
+
+function zoom {
+    DOWNLOAD_DIR=/tmp
+    ZOOM_FILE=zoom_amd64.deb
+    ZOOM_FILEPATH=$DOWNLOAD_DIR/$ZOOM_FILE
+    wget -O $ZOOM_FILEPATH "https://zoom.us/client/latest/${ZOOM_FILE}"
+    sudo apt install -y $ZOOM_FILEPATH
 }
 
 function configure {
