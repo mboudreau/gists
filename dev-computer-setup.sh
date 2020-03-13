@@ -228,6 +228,7 @@ function configure {
     git config --global mergetool.keepTemporaries false
     git config --global mergetool.prompt false
     git config --global difftool.prompt false
+    git config --global core.excludesfile '~/.gitignore'
 
     # Adding git alias "all"
     git config --global alias.all '!f() { ls -R -d */.git | sed 's,\/.git,,' | xargs -P10 -I{} git -C {} $@; }; f'
