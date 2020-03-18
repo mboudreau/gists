@@ -238,6 +238,7 @@ function install-gnome-modules {
   echo "Please open the following links with firefox and install gnome modules:"
   echo "https://extensions.gnome.org/extension/708/panel-osd/"
   echo "https://extensions.gnome.org/extension/1160/dash-to-panel/"
+  echo "https://extensions.gnome.org/extension/615/appindicator-support/"
 }
 
 for step in "${STEPS[@]}"
