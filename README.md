@@ -1,10 +1,23 @@
-# gists
+# Gists
 
 Great centralized place to put in tidbits of scripts that can be ran from anywhere:
 
 * **Bash** using `source <(curl -s https://raw.githubusercontent.com/mboudreau/gists/master/YOUR-SCRIPT-HERE.sh)`
+* To install all scripts locally, just run `source <(curl -s https://raw.githubusercontent.com/mboudreau/gists/master/install.sh)`.  Afterwards, the scripts should be available in your bash, so you can just run `dev-computer-setup.sh` from anywhere.
 
-To have these scripts referenced locally for the specific user, run `echo "source <(curl -s https://raw.githubusercontent.com/mboudreau/gists/master/YOUR-SCRIPT-HERE.sh)" > ~/.local/bin/YOUR-SCRIPT-HERE.sh; chmod +x ~/.local/bin/YOUR-SCRIPT-HERE.sh`.
+To have these scripts referenced locally for the specific user, run `echo -e "#!/usr/bin/env bash\nsource <(curl -s https://raw.githubusercontent.com/mboudreau/gists/master/YOUR-SCRIPT-HERE.sh)" > ~/.local/bin/YOUR-SCRIPT-HERE.sh; chmod +x ~/.local/bin/YOUR-SCRIPT-HERE.sh`.
+
+### install
+
+Installs all scripts locally and be ready to be used.
+
+`./install.sh`
+
+### dev-computer-setup
+
+Installs all required packages and applications to be able to work.
+
+`./dev-computer-setup.sh`
 
 ### install-hashicorp
 
