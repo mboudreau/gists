@@ -35,6 +35,10 @@ while getopts "d:h:?:" opt; do
 done
 shift $((OPTIND-1))
 
+# Creates directory if not available
+mkdir -p $DIRECTORY
+
+# Add scripts to directory
 for scriptName in "${SCRIPTS[@]}"
 do
   script=$DIRECTORY/$scriptName.sh
