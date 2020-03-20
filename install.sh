@@ -46,5 +46,6 @@ do
   chmod +x "$script"
 done
 
-# add directory to bashrc
+# add directory to bash profile & reload in current terminal
 echo -e "# set PATH so it includes user's private bin if it exists\nif [ -d \"${DIRECTORY}\" ] ; then\n    PATH=\"${DIRECTORY}:$PATH\"\nfi" >> ~/.profile
+source ~/.profile
