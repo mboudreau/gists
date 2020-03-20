@@ -13,8 +13,8 @@ declare -a AVAILABLE_STEPS=("install-prerequisite" "add-ppa" "apt-install" "snap
 function show_help {
     echo "${BOLD}Development Computer Setup Script${RESET} - Must be ran as sudo to work"
     echo ""
-    echo "Basic usage: sudo ./$(basename $0) [options] [steps-to-run]"
-    echo "Example: sudo ./$(basename $0) add-ppa apt-install"
+    echo "Basic usage: ./$(basename "$0") [options] [steps-to-run]"
+    echo "Example: ./$(basename "$0") add-ppa apt-install"
     echo ""
     echo "By default, this scripts runs all the steps sequentially."
     echo "You can specify a list of space delimited steps like one of the following: ${AVAILABLE_STEPS[*]}"
@@ -26,8 +26,9 @@ function show_help {
 # Check if in sudo
 if [ "$EUID" -ne 0 ]
 then
-    echo "${YELLOW}You must run this script as sudo to be able to do everything. Exiting.${RESET}"
-    exit 1
+    echo "${YELLOW}Missing sudo, re-running this script with sudo.${RESET}"
+    sudo "$(realpath "$0")"
+    exit 0
 fi
 
 # Gather options from flags.
