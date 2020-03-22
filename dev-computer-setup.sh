@@ -9,6 +9,12 @@ RESET=$(tput sgr0)
 RELEASE=$(lsb_release -cs)
 
 declare -a AVAILABLE_STEPS=("install-prerequisite" "add-ppa" "apt-install" "snap-install" "dist-upgrade" "p4merge" "zoom" "configure" "install-gnome-modules")
+declare -a MESSAGES=()
+
+function add_message {
+    echo "$1" 
+    MESSAGES+=("$1")
+}
 
 function show_help {
     echo "${BOLD}Development Computer Setup Script${RESET} - Must be ran as sudo to work"
@@ -84,7 +90,7 @@ function install-prerequisite {
         g++ \
         make
 
-    echo "${GREEN}Prerequisite dependencies installed.${RESET}"
+    add_message "${GREEN}Prerequisite dependencies installed.${RESET}"
 }
 
 function add-ppa {
@@ -137,7 +143,7 @@ function add-ppa {
     # UPDATE CACHE
     apt-get update
 
-    echo "${GREEN}PPAs added.${RESET}"
+    add_message "${GREEN}PPAs added.${RESET}"
 }
 
 function apt-install {
@@ -165,7 +171,7 @@ function apt-install {
         virtualbox-6.1
         # balena-etcher-electron
 
-    echo "${GREEN}APT packages installed.${RESET}"
+    add_message "${GREEN}APT packages installed.${RESET}"
 }
 
 function snap-install {
@@ -178,7 +184,7 @@ function snap-install {
     snap install --classic rider
     snap install --classic sublime-text
 
-    echo "${GREEN}All Snap packages installed.${RESET}${YELLOW} You might need to logout/login to see the changes.${RESET}"
+    add_message "${GREEN}All Snap packages installed.${RESET}${YELLOW}${BOLD} You might need to logout/login to see the changes.${RESET}"
 }
 
 function add-apt {
@@ -201,6 +207,8 @@ function p4merge {
     tar zxvf $P4FILE -C $DOWNLOAD_DIR
     sudo cp -r $DOWNLOAD_DIR/p4v-* $P4_INSTALL_DIR/
     sudo ln -f -s $P4_INSTALL_DIR/bin/p4merge /usr/bin/p4merge
+    
+    add_message "${GREEN}P4Merge installed.${RESET}"
 }
 
 function zoom {
@@ -209,6 +217,8 @@ function zoom {
     ZOOM_FILEPATH=$DOWNLOAD_DIR/$ZOOM_FILE
     wget -O $ZOOM_FILEPATH "https://zoom.us/client/latest/${ZOOM_FILE}"
     sudo apt install -y $ZOOM_FILEPATH
+    
+    add_message "${GREEN}Zoom installed.${RESET}"
 }
 
 function configure {
@@ -233,13 +243,19 @@ function configure {
 
     # Adding git alias "all"
     git config --global alias.all '!f() { ls -R -d */.git | sed 's,\/.git,,' | xargs -P10 -I{} git -C {} $@; }; f'
+    
+    add_message "${GREEN}System has been configured.${RESET}"
 }
 
 function install-gnome-modules {
-  echo "Please open the following links with firefox and install gnome modules:"
-  echo "https://extensions.gnome.org/extension/708/panel-osd/"
-  echo "https://extensions.gnome.org/extension/1160/dash-to-panel/"
-  echo "https://extensions.gnome.org/extension/615/appindicator-support/"
+  LINKS=("https://extensions.gnome.org/extension/708/panel-osd/" "https://extensions.gnome.org/extension/1160/dash-to-panel/" "https://extensions.gnome.org/extension/615/appindicator-support/") 
+  echo ""
+  echo "${YELLOW}Installing gnome modules through firefox, trying to open following links through command line:${RESET}"
+  for link in "${LINKS[@]}"
+  do
+    echo "$link"
+    firefox "$link" &
+  done
 }
 
 for step in "${STEPS[@]}"
@@ -248,3 +264,11 @@ do
     $step
 done
 
+echo ""
+echo "Setup complete:"
+# Display all end messages
+for msg in "${MESSAGES[@]}"
+do
+    echo " - $msg"
+done
+echo ""
