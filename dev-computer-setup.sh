@@ -17,7 +17,7 @@ function add_message {
 }
 
 function show_help {
-    echo "${BOLD}Development Computer Setup Script${RESET} - Must be ran as sudo to work"
+    echo "${BOLD}Development Computer Setup Script${RESET}"
     echo ""
     echo "Basic usage: ./$(basename "$0") [options] [steps-to-run]"
     echo "Example: ./$(basename "$0") add-ppa apt-install"
@@ -28,14 +28,6 @@ function show_help {
     echo "${BOLD}Options${RESET}:"
     echo " ${BOLD}-h${RESET}: Help - Show me this helpful message."
 }
-
-# Check if in sudo
-if [ "$EUID" -ne 0 ]
-then
-    echo "${YELLOW}Missing sudo, re-running this script with sudo.${RESET}"
-    sudo "$(realpath "$0")"
-    exit 0
-fi
 
 # Gather options from flags.
 while getopts "h:?:" opt; do
@@ -71,15 +63,15 @@ else
 fi
 
 function dist-upgrade {
-    apt-get update
-    apt-get dist-upgrade -y
+    sudo apt-get update
+    sudo apt-get dist-upgrade -y
 }
 
 function install-prerequisite {
     echo "${YELLOW}Installing prerequisite dependencies...${RESET}"
 
-    apt-get update
-    apt-get install -y \
+    sudo apt-get update
+    sudo apt-get install -y \
         apt-transport-https \
         ca-certificates \
         curl \
@@ -96,34 +88,30 @@ function install-prerequisite {
 function add-ppa {
     echo "${YELLOW}Adding PPAs...${RESET}"
 
-    # DOCKER
-    add-apt-key https://download.docker.com/linux/ubuntu/gpg
-    add-apt-string docker "deb [arch=amd64] https://download.docker.com/linux/ubuntu $RELEASE stable"
-
     # CHROME
     add-apt-key https://dl-ssl.google.com/linux/linux_signing_key.pub
     add-apt-string google-chrome "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main"
 
     # FIREFOX
-    add-apt ppa:mozillateam/ppa
+    sudo add-apt ppa:mozillateam/ppa
 
     # WEBUPD8
-    add-apt ppa:nilarimogard/webupd8
+    sudo add-apt ppa:nilarimogard/webupd8
 
     # REMMIMMA (FREERDP)
-    add-apt ppa:remmina-ppa-team/remmina-next
+    sudo add-apt ppa:remmina-ppa-team/remmina-next
 
     # GHOSTWRITER
-    add-apt ppa:wereturtle/ppa
+    sudo add-apt ppa:wereturtle/ppa
 
     # GIT
-    add-apt ppa:git-core/ppa
+    sudo add-apt ppa:git-core/ppa
 
     # LIBRE OFFICE
-    add-apt ppa:libreoffice/ppa
+    sudo add-apt ppa:libreoffice/ppa
 
     # OIBAF VIDEO DRIVERS
-    add-apt ppa:oibaf/graphics-drivers
+    sudo add-apt ppa:oibaf/graphics-drivers
 
     # NODE & NPM & YARN
     add-apt-key https://deb.nodesource.com/gpgkey/nodesource.gpg.key
@@ -141,7 +129,7 @@ function add-ppa {
     # add-apt-string etcher "deb https://deb.etcher.io stable etcher"
     
     # UPDATE CACHE
-    apt-get update
+    sudo apt-get update
 
     add_message "${GREEN}PPAs added.${RESET}"
 }
@@ -149,8 +137,8 @@ function add-ppa {
 function apt-install {
     echo "${YELLOW}Installing APT packages...${RESET}"
 
-    apt-get update
-    apt-get install -y \
+    sudo apt-get update
+    sudo apt-get install -y \
         google-chrome-stable \
         firefox \
         snapd \
@@ -177,12 +165,16 @@ function apt-install {
 function snap-install {
     snap install postman
     snap install ngrok
+    snap install docker
     snap install --classic dotnet-sdk
     snap install --classic slack
     snap install --classic webstorm
     snap install --classic intellij-idea-ultimate
     snap install --classic rider
     snap install --classic sublime-text
+    
+    echo -e "# set PATH to include /snap/bin\nPATH=\"/snap/bin:\$PATH\"" >> ~/.profile
+    source ~/.profile
 
     add_message "${GREEN}All Snap packages installed.${RESET}${YELLOW}${BOLD} You might need to logout/login to see the changes.${RESET}"
 }
