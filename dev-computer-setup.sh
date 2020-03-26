@@ -221,6 +221,9 @@ function configure {
     # Increasing file watchers & restarting system controller
     echo "fs.inotify.max_user_watches = 524288" > /etc/sysctl.d/90-file-watchers.conf
     sudo sysctl -p --system
+    
+    # Adding user to docker group
+    sudo usermod -aG docker $USER
 
     # Adding git config
     read -rp 'Your Name: ' gitname
