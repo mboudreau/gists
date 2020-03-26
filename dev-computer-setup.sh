@@ -87,6 +87,10 @@ function install-prerequisite {
 
 function add-ppa {
     echo "${YELLOW}Adding PPAs...${RESET}"
+    
+    # DOCKER	
+    add-apt-key https://download.docker.com/linux/ubuntu/gpg	
+    add-apt-string docker "deb [arch=amd64] https://download.docker.com/linux/ubuntu $RELEASE stable"
 
     # CHROME
     add-apt-key https://dl-ssl.google.com/linux/linux_signing_key.pub
@@ -156,7 +160,8 @@ function apt-install {
         yarn \
         openssh-server \
         gnome-tweaks \
-        virtualbox-6.1
+        virtualbox-6.1 \
+        docker.io
         # balena-etcher-electron
 
     add_message "${GREEN}APT packages installed.${RESET}"
@@ -165,7 +170,6 @@ function apt-install {
 function snap-install {
     snap install postman
     snap install ngrok
-    snap install docker
     snap install --classic dotnet-sdk
     snap install --classic slack
     snap install --classic webstorm
@@ -180,7 +184,7 @@ function snap-install {
 }
 
 function add-apt {
-    add-apt-repository -n -y "$@"
+    sudo add-apt-repository -n -y "$@"
 }
 
 function add-apt-key {
@@ -216,7 +220,7 @@ function zoom {
 function configure {
     # Increasing file watchers & restarting system controller
     echo "fs.inotify.max_user_watches = 524288" > /etc/sysctl.d/90-file-watchers.conf
-    sysctl -p --system
+    sudo sysctl -p --system
 
     # Adding git config
     read -rp 'Your Name: ' gitname
