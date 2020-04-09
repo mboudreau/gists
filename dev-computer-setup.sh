@@ -243,6 +243,9 @@ function configure {
     # Adding git alias "all"
     git config --global alias.all '!f() { ls -R -d */.git | sed 's,\/.git,,' | xargs -P10 -I{} git -C {} $@; }; f'
     
+    # Adding git global ignore file
+    echo ".idea/" >> ~/.gitignore
+    
     add_message "${GREEN}System has been configured.${RESET}"
 }
 
