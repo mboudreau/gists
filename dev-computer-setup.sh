@@ -119,7 +119,7 @@ function add-ppa {
 
     # NODE & NPM & YARN
     add-apt-key https://deb.nodesource.com/gpgkey/nodesource.gpg.key
-    add-apt-string node "deb https://deb.nodesource.com/node_10.x $RELEASE main"
+    add-apt-string node "deb https://deb.nodesource.com/node_12.x $RELEASE main"
     add-apt-key https://dl.yarnpkg.com/debian/pubkey.gpg
     add-apt-string yarn "deb https://dl.yarnpkg.com/debian/ stable main"
 
