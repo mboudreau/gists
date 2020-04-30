@@ -176,6 +176,7 @@ function snap-install {
     snap install --classic intellij-idea-ultimate
     snap install --classic rider
     snap install --classic sublime-text
+    snap install --beta authy
     
     echo -e "# set PATH to include /snap/bin\nPATH=\"/snap/bin:\$PATH\"" >> ~/.profile
     source ~/.profile
