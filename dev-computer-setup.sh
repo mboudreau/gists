@@ -9,9 +9,15 @@ RESET=$(tput sgr0)
 RELEASE=$(lsb_release -cs)
 
 declare -a AVAILABLE_STEPS=("install-prerequisite" "add-ppa" "apt-install" "snap-install" "dist-upgrade" "p4merge" "zoom" "configure" "install-gnome-modules")
+declare -a MESSAGES=()
+
+function add_message {
+    echo "$1" 
+    MESSAGES+=("$1")
+}
 
 function show_help {
-    echo "${BOLD}Development Computer Setup Script${RESET} - Must be ran as sudo to work"
+    echo "${BOLD}Development Computer Setup Script${RESET}"
     echo ""
     echo "Basic usage: ./$(basename "$0") [options] [steps-to-run]"
     echo "Example: ./$(basename "$0") add-ppa apt-install"
@@ -22,14 +28,6 @@ function show_help {
     echo "${BOLD}Options${RESET}:"
     echo " ${BOLD}-h${RESET}: Help - Show me this helpful message."
 }
-
-# Check if in sudo
-if [ "$EUID" -ne 0 ]
-then
-    echo "${YELLOW}Missing sudo, re-running this script with sudo.${RESET}"
-    sudo "$(realpath "$0")"
-    exit 0
-fi
 
 # Gather options from flags.
 while getopts "h:?:" opt; do
@@ -65,15 +63,15 @@ else
 fi
 
 function dist-upgrade {
-    apt-get update
-    apt-get dist-upgrade -y
+    sudo apt-get update
+    sudo apt-get dist-upgrade -y
 }
 
 function install-prerequisite {
     echo "${YELLOW}Installing prerequisite dependencies...${RESET}"
 
-    apt-get update
-    apt-get install -y \
+    sudo apt-get update
+    sudo apt-get install -y \
         apt-transport-https \
         ca-certificates \
         curl \
@@ -84,14 +82,14 @@ function install-prerequisite {
         g++ \
         make
 
-    echo "${GREEN}Prerequisite dependencies installed.${RESET}"
+    add_message "${GREEN}Prerequisite dependencies installed.${RESET}"
 }
 
 function add-ppa {
     echo "${YELLOW}Adding PPAs...${RESET}"
-
-    # DOCKER
-    add-apt-key https://download.docker.com/linux/ubuntu/gpg
+    
+    # DOCKER	
+    add-apt-key https://download.docker.com/linux/ubuntu/gpg	
     add-apt-string docker "deb [arch=amd64] https://download.docker.com/linux/ubuntu $RELEASE stable"
 
     # CHROME
@@ -99,29 +97,29 @@ function add-ppa {
     add-apt-string google-chrome "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main"
 
     # FIREFOX
-    add-apt ppa:mozillateam/ppa
+    sudo add-apt ppa:mozillateam/ppa
 
     # WEBUPD8
-    add-apt ppa:nilarimogard/webupd8
+    sudo add-apt ppa:nilarimogard/webupd8
 
     # REMMIMMA (FREERDP)
-    add-apt ppa:remmina-ppa-team/remmina-next
+    sudo add-apt ppa:remmina-ppa-team/remmina-next
 
     # GHOSTWRITER
-    add-apt ppa:wereturtle/ppa
+    sudo add-apt ppa:wereturtle/ppa
 
     # GIT
-    add-apt ppa:git-core/ppa
+    sudo add-apt ppa:git-core/ppa
 
     # LIBRE OFFICE
-    add-apt ppa:libreoffice/ppa
+    sudo add-apt ppa:libreoffice/ppa
 
     # OIBAF VIDEO DRIVERS
-    add-apt ppa:oibaf/graphics-drivers
+    sudo add-apt ppa:oibaf/graphics-drivers
 
     # NODE & NPM & YARN
     add-apt-key https://deb.nodesource.com/gpgkey/nodesource.gpg.key
-    add-apt-string node "deb https://deb.nodesource.com/node_10.x $RELEASE main"
+    add-apt-string node "deb https://deb.nodesource.com/node_12.x $RELEASE main"
     add-apt-key https://dl.yarnpkg.com/debian/pubkey.gpg
     add-apt-string yarn "deb https://dl.yarnpkg.com/debian/ stable main"
 
@@ -135,16 +133,16 @@ function add-ppa {
     # add-apt-string etcher "deb https://deb.etcher.io stable etcher"
     
     # UPDATE CACHE
-    apt-get update
+    sudo apt-get update
 
-    echo "${GREEN}PPAs added.${RESET}"
+    add_message "${GREEN}PPAs added.${RESET}"
 }
 
 function apt-install {
     echo "${YELLOW}Installing APT packages...${RESET}"
 
-    apt-get update
-    apt-get install -y \
+    sudo apt-get update
+    sudo apt-get install -y \
         google-chrome-stable \
         firefox \
         snapd \
@@ -162,10 +160,11 @@ function apt-install {
         yarn \
         openssh-server \
         gnome-tweaks \
-        virtualbox-6.1
+        virtualbox-6.1 \
+        docker-ce docker-ce-cli containerd.io
         # balena-etcher-electron
 
-    echo "${GREEN}APT packages installed.${RESET}"
+    add_message "${GREEN}APT packages installed.${RESET}"
 }
 
 function snap-install {
@@ -177,12 +176,16 @@ function snap-install {
     snap install --classic intellij-idea-ultimate
     snap install --classic rider
     snap install --classic sublime-text
+    snap install --beta authy
+    
+    echo -e "# set PATH to include /snap/bin\nPATH=\"/snap/bin:\$PATH\"" >> ~/.profile
+    source ~/.profile
 
-    echo "${GREEN}All Snap packages installed.${RESET}${YELLOW} You might need to logout/login to see the changes.${RESET}"
+    add_message "${GREEN}All Snap packages installed.${RESET}${YELLOW}${BOLD} You might need to logout/login to see the changes.${RESET}"
 }
 
 function add-apt {
-    add-apt-repository -n -y "$@"
+    sudo add-apt-repository -n -y "$@"
 }
 
 function add-apt-key {
@@ -201,6 +204,8 @@ function p4merge {
     tar zxvf $P4FILE -C $DOWNLOAD_DIR
     sudo cp -r $DOWNLOAD_DIR/p4v-* $P4_INSTALL_DIR/
     sudo ln -f -s $P4_INSTALL_DIR/bin/p4merge /usr/bin/p4merge
+    
+    add_message "${GREEN}P4Merge installed.${RESET}"
 }
 
 function zoom {
@@ -209,12 +214,17 @@ function zoom {
     ZOOM_FILEPATH=$DOWNLOAD_DIR/$ZOOM_FILE
     wget -O $ZOOM_FILEPATH "https://zoom.us/client/latest/${ZOOM_FILE}"
     sudo apt install -y $ZOOM_FILEPATH
+    
+    add_message "${GREEN}Zoom installed.${RESET}"
 }
 
 function configure {
     # Increasing file watchers & restarting system controller
     echo "fs.inotify.max_user_watches = 524288" > /etc/sysctl.d/90-file-watchers.conf
-    sysctl -p --system
+    sudo sysctl -p --system
+    
+    # Adding user to docker group
+    sudo usermod -aG docker $USER
 
     # Adding git config
     read -rp 'Your Name: ' gitname
@@ -233,13 +243,22 @@ function configure {
 
     # Adding git alias "all"
     git config --global alias.all '!f() { ls -R -d */.git | sed 's,\/.git,,' | xargs -P10 -I{} git -C {} $@; }; f'
+    
+    # Adding git global ignore file
+    echo ".idea/" >> ~/.gitignore
+    
+    add_message "${GREEN}System has been configured.${RESET}"
 }
 
 function install-gnome-modules {
-  echo "Please open the following links with firefox and install gnome modules:"
-  echo "https://extensions.gnome.org/extension/708/panel-osd/"
-  echo "https://extensions.gnome.org/extension/1160/dash-to-panel/"
-  echo "https://extensions.gnome.org/extension/615/appindicator-support/"
+  LINKS=("https://extensions.gnome.org/extension/708/panel-osd/" "https://extensions.gnome.org/extension/1160/dash-to-panel/" "https://extensions.gnome.org/extension/615/appindicator-support/") 
+  echo ""
+  echo "${YELLOW}Installing gnome modules through firefox, trying to open following links through command line:${RESET}"
+  for link in "${LINKS[@]}"
+  do
+    echo "$link"
+    firefox "$link" &
+  done
 }
 
 for step in "${STEPS[@]}"
@@ -248,3 +267,11 @@ do
     $step
 done
 
+echo ""
+echo "Setup complete:"
+# Display all end messages
+for msg in "${MESSAGES[@]}"
+do
+    echo " - $msg"
+done
+echo ""

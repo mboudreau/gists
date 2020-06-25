@@ -6,7 +6,7 @@ GREEN=`tput setaf 2`
 YELLOW=`tput setaf 3`
 RESET=`tput sgr0`
 
-DIRECTORY=$HOME/.local/bin
+DIRECTORY='$HOME/.local/bin'
 declare -a SCRIPTS=("create-timelapse" "dev-computer-setup" "get-temporary-token" "install-docker" "install-hashicorp" "install-p4merge-git")
 
 function show_help {
@@ -41,7 +41,7 @@ mkdir -p $DIRECTORY
 # Add scripts to directory
 for scriptName in "${SCRIPTS[@]}"
 do
-  script=$DIRECTORY/$scriptName.sh
+  script=$(eval $DIRECTORY)/$scriptName.sh
   echo -e "#!/usr/bin/env bash\nsource <(curl -s https://raw.githubusercontent.com/mboudreau/gists/master/${scriptName}.sh)" > "$script"
   chmod +x "$script"
 done
