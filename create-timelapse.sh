@@ -15,7 +15,7 @@ if ! [ -x "$(command -v ffmpeg)" ]; then
 fi
 
 # Default output name is the name of the containing folder
-OUTPUT=$(basename $PWD)
+OUTPUT="${PWD##*/}"
 
 # Gather options from flags.
 while getopts "o:" opt; do
