@@ -20,7 +20,9 @@ if [[ $# -lt 2 ]]; then
 fi
 
 PROJECT="/tmp/project-$(date +'%s').pto"
-PREFIX="$1-${@: -1}-panorama"
+FIRST=$(echo "$1" | cut -f 1 -d '.')
+LAST=$(echo "${@: -1}" | cut -f 1 -d '.')
+PREFIX="$FIRST - $LAST panorama"
 
 pto_gen -o "$PROJECT" "$@"
 cpfind -o "$PROJECT" --multirow --celeste "$PROJECT"
