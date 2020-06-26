@@ -17,6 +17,11 @@ fi
 # Default output name is the name of the containing folder
 OUTPUT="${PWD##*/}"
 
+# Check to see if a name was specified for the output file
+if [[ -n "$1" ]]; then
+  OUTPUT="$1"
+fi
+
 # Gather options from flags.
 while getopts "o:" opt; do
     case "$opt" in
