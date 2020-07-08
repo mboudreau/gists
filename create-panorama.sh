@@ -15,14 +15,16 @@ if ! [ -x "$(command -v hugin)" ]; then
 fi
 
 if [[ $# -lt 2 ]]; then
-    echo "${RED}Need a minimum of 2 images to create a panorama.${RESET}"
-    exit 2
+  echo "${RED}Need a minimum of 2 images to create a panorama.${RESET}"
+  exit 2
 fi
 
 PROJECT="/tmp/project-$(date +'%s').pto"
-FIRST=$(echo "$1" | cut -f 1 -d '.')
-LAST=$(echo "${@: -1}" | cut -f 1 -d '.')
-PREFIX="$FIRST - $LAST panorama"
+FIRST="$1"
+LAST="${@: -1}"
+FIRST_NAME=$(echo "$FIRST" | cut -f 1 -d '.')
+LAST_NAME=$(echo "$LAST" | cut -f 1 -d '.')
+PREFIX="${FIRST_NAME}-${LAST_NAME}-panorama"
 
 pto_gen -o "$PROJECT" "$@"
 cpfind -o "$PROJECT" --multirow --celeste "$PROJECT"
@@ -31,3 +33,4 @@ linefind -o "$PROJECT" "$PROJECT"
 autooptimiser -a -m -l -s -o "$PROJECT" "$PROJECT"
 pano_modify --ldr-file=JPG --ldr-compression=100 --canvas=AUTO --crop=AUTO -o "$PROJECT" "$PROJECT"
 hugin_executor --stitching --prefix="$PREFIX" "$PROJECT"
+exiftool -overwrite_original -TagsFromFile "$FIRST" "${PREFIX}.jpg"
