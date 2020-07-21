@@ -191,7 +191,7 @@ function snap-install() {
 
   for pkg in "${SNAPS[@]}"
   do
-    sudo snap install "$pkg"
+    sudo snap install $pkg
   done
 
   echo -e "# set PATH to include /snap/bin\nPATH=\"/snap/bin:\$PATH\"" >>~/.profile
