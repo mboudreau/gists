@@ -141,8 +141,8 @@ function add-ppa {
     add-apt-string virtualbox "deb http://download.virtualbox.org/virtualbox/debian $RELEASE contrib"
     
     # BALENA ETCHER
-    # apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 379CE192D401AB61
-    # add-apt-string etcher "deb https://deb.etcher.io stable etcher"
+    apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 379CE192D401AB61
+    add-apt-string etcher "deb https://deb.etcher.io stable etcher"
     
     # UPDATE CACHE
     sudo apt-get update
@@ -173,8 +173,8 @@ function apt-install {
         openssh-server \
         gnome-tweaks \
         virtualbox-6.1 \
-        docker-ce docker-ce-cli containerd.io
-        # balena-etcher-electron
+        docker-ce docker-ce-cli containerd.io \
+        balena-etcher-electron
 
     add_message "${GREEN}APT packages installed.${RESET}"
 }
