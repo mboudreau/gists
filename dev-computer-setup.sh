@@ -89,6 +89,14 @@ function add-apt() {
 }
 
 function add-apt-key() {
+  # Default keyserver to ubuntu.com unless specified
+  if [[ -z "$2" ]]; then
+    2=hkps://keyserver.ubuntu.com:443
+  fi
+  sudo apt-key adv --keyserver "$2" --recv-keys "$1"
+}
+
+function add-apt-keyfile() {
   curl -sL "$@" | sudo apt-key add -
 }
 
@@ -100,11 +108,11 @@ function add-ppa() {
   echo "${YELLOW}Adding PPAs...${RESET}"
 
   # DOCKER
-  add-apt-key https://download.docker.com/linux/ubuntu/gpg
+  add-apt-keyfile https://download.docker.com/linux/ubuntu/gpg
   add-apt-string docker "deb [arch=amd64] https://download.docker.com/linux/ubuntu $RELEASE stable"
 
   # CHROME
-  add-apt-key https://dl-ssl.google.com/linux/linux_signing_key.pub
+  add-apt-keyfile https://dl-ssl.google.com/linux/linux_signing_key.pub
   add-apt-string google-chrome "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main"
 
   # FIREFOX
@@ -129,19 +137,19 @@ function add-ppa() {
   add-apt ppa:oibaf/graphics-drivers
 
   # NODE & NPM & YARN
-  add-apt-key https://deb.nodesource.com/gpgkey/nodesource.gpg.key
+  add-apt-keyfile https://deb.nodesource.com/gpgkey/nodesource.gpg.key
   add-apt-string node "deb https://deb.nodesource.com/node_12.x $RELEASE main"
-  add-apt-key https://dl.yarnpkg.com/debian/pubkey.gpg
+  add-apt-keyfile https://dl.yarnpkg.com/debian/pubkey.gpg
   add-apt-string yarn "deb https://dl.yarnpkg.com/debian/ stable main"
 
   # VIRTUALBOX
-  add-apt-key https://www.virtualbox.org/download/oracle_vbox_2016.asc
-  add-apt-key https://www.virtualbox.org/download/oracle_vbox.asc
+  add-apt-keyfile https://www.virtualbox.org/download/oracle_vbox_2016.asc
+  add-apt-keyfile https://www.virtualbox.org/download/oracle_vbox.asc
   add-apt-string virtualbox "deb http://download.virtualbox.org/virtualbox/debian $RELEASE contrib"
 
   # BALENA ETCHER
   add-apt-string etcher "deb https://deb.etcher.io stable etcher"
-  apt-key adv --keyserver hkps://keyserver.ubuntu.com:443 --recv-keys 379CE192D401AB61
+  add-apt-key 379CE192D401AB61
 
   # UPDATE CACHE
   sudo apt-get update
