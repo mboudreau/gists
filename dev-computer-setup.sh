@@ -85,6 +85,18 @@ function install-prerequisite {
     add_message "${GREEN}Prerequisite dependencies installed.${RESET}"
 }
 
+function add-apt {
+    sudo add-apt-repository -n -y "$@"
+}
+
+function add-apt-key {
+    curl -sL "$@" | sudo apt-key add -
+}
+
+function add-apt-string {
+    echo "$2" | sudo tee "/etc/apt/sources.list.d/$1.list"
+}
+
 function add-ppa {
     echo "${YELLOW}Adding PPAs...${RESET}"
     
@@ -97,25 +109,25 @@ function add-ppa {
     add-apt-string google-chrome "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main"
 
     # FIREFOX
-    sudo add-apt ppa:mozillateam/ppa
+    add-apt ppa:mozillateam/ppa
 
     # WEBUPD8
-    sudo add-apt ppa:nilarimogard/webupd8
+    add-apt ppa:nilarimogard/webupd8
 
     # REMMIMMA (FREERDP)
-    sudo add-apt ppa:remmina-ppa-team/remmina-next
+    add-apt ppa:remmina-ppa-team/remmina-next
 
     # GHOSTWRITER
-    sudo add-apt ppa:wereturtle/ppa
+    add-apt ppa:wereturtle/ppa
 
     # GIT
-    sudo add-apt ppa:git-core/ppa
+    add-apt ppa:git-core/ppa
 
     # LIBRE OFFICE
-    sudo add-apt ppa:libreoffice/ppa
+    add-apt ppa:libreoffice/ppa
 
     # OIBAF VIDEO DRIVERS
-    sudo add-apt ppa:oibaf/graphics-drivers
+    add-apt ppa:oibaf/graphics-drivers
 
     # NODE & NPM & YARN
     add-apt-key https://deb.nodesource.com/gpgkey/nodesource.gpg.key
@@ -182,18 +194,6 @@ function snap-install {
     source ~/.profile
 
     add_message "${GREEN}All Snap packages installed.${RESET}${YELLOW}${BOLD} You might need to logout/login to see the changes.${RESET}"
-}
-
-function add-apt {
-    sudo add-apt-repository -n -y "$@"
-}
-
-function add-apt-key {
-    curl -sL "$@" | sudo apt-key add -
-}
-
-function add-apt-string {
-    echo "$2" | sudo tee "/etc/apt/sources.list.d/$1.list"
 }
 
 function p4merge {
