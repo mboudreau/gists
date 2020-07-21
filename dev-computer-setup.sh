@@ -140,8 +140,8 @@ function add-ppa() {
   add-apt-string virtualbox "deb http://download.virtualbox.org/virtualbox/debian $RELEASE contrib"
 
   # BALENA ETCHER
-  apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 379CE192D401AB61
   add-apt-string etcher "deb https://deb.etcher.io stable etcher"
+  apt-key adv --keyserver hkps://keyserver.ubuntu.com:443 --recv-keys 379CE192D401AB61
 
   # UPDATE CACHE
   sudo apt-get update
