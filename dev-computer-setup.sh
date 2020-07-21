@@ -180,8 +180,8 @@ function apt-install() {
     openssh-server \
     gnome-tweaks \
     virtualbox-6.1 \
-    docker-ce docker-ce-cli containerd.io \
-    balena-etcher-electron
+    docker-ce docker-ce-cli containerd.io
+#    balena-etcher-electron
 
   add_message "${GREEN}APT packages installed.${RESET}"
 }
