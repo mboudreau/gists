@@ -72,6 +72,7 @@ function install-prerequisite() {
   sudo apt-get update
   sudo apt-get install -y \
     apt-transport-https \
+    cifs-utils \
     ca-certificates \
     curl \
     wget \
