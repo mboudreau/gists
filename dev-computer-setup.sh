@@ -146,7 +146,7 @@ function add-ppa() {
   # VIRTUALBOX
   add-apt-keyfile https://www.virtualbox.org/download/oracle_vbox_2016.asc
   add-apt-keyfile https://www.virtualbox.org/download/oracle_vbox.asc
-  add-apt-string virtualbox "deb http://download.virtualbox.org/virtualbox/debian $RELEASE contrib"
+  add-apt-string virtualbox "deb [arch=amd64] http://download.virtualbox.org/virtualbox/debian $RELEASE contrib"
 
   # BALENA ETCHER
   # add-apt-string etcher "deb https://deb.etcher.io stable etcher"
