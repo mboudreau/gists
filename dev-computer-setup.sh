@@ -181,6 +181,7 @@ function apt-install() {
     openssh-server \
     gnome-tweaks \
     virtualbox-6.1 \
+    ffmpeg \
     docker-ce docker-ce-cli containerd.io
 #    balena-etcher-electron
 
