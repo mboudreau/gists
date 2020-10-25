@@ -80,7 +80,8 @@ function install-prerequisite() {
     software-properties-common \
     gcc \
     g++ \
-    make
+    make \
+    jq
 
   add_message "${GREEN}Prerequisite dependencies installed.${RESET}"
 }
