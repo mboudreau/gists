@@ -8,7 +8,7 @@ YELLOW=$(tput setaf 3)
 RESET=$(tput sgr0)
 RELEASE=$(lsb_release -cs)
 
-declare -a AVAILABLE_STEPS=("install-prerequisite" "add-ppa" "apt-install" "snap-install" "dist-upgrade" "p4merge" "zoom" "configure" "install-gnome-modules")
+declare -a AVAILABLE_STEPS=("dist-upgrade" "install-prerequisite" "add-ppa" "apt-install" "snap-install" "docker-compose" "p4merge" "zoom" "configure" "install-gnome-modules")
 declare -a MESSAGES=()
 
 function add_message() {
@@ -202,6 +202,15 @@ function snap-install() {
   source ~/.profile
 
   add_message "${GREEN}All Snap packages installed.${RESET}${YELLOW}${BOLD} You might need to logout/login to see the changes.${RESET}"
+}
+
+function docker-compose() {
+  COMPOSE_RELEASE=$(curl --silent "https://api.github.com/repos/docker/compose/releases/latest" | grep -Po '"tag_name": "\K.*?(?=")')
+
+  sudo curl -L https://github.com/docker/compose/releases/download/$COMPOSE_RELEASE/docker-compose-$(uname -s)-$(uname -m) -o /usr/bin/docker-compose
+  sudo chmod +x /usr/bin/docker-compose
+
+  add_message "${GREEN}docker-compose installed.${RESET}"
 }
 
 function p4merge() {
