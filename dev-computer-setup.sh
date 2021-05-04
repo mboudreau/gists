@@ -8,7 +8,7 @@ YELLOW=$(tput setaf 3)
 RESET=$(tput sgr0)
 RELEASE=$(lsb_release -cs)
 
-declare -a AVAILABLE_STEPS=("dist-upgrade" "install-prerequisite" "add-ppa" "apt-install" "snap-install" "docker-compose" "p4merge" "zoom" "configure" "install-gnome-modules")
+declare -a AVAILABLE_STEPS=("dist-upgrade" "install-prerequisite" "add-ppa" "apt-install" "snap-install" "flatpak-install" "docker-compose" "p4merge" "configure" "install-gnome-modules")
 declare -a MESSAGES=()
 
 function add_message() {
@@ -81,7 +81,9 @@ function install-prerequisite() {
     gcc \
     g++ \
     make \
-    jq
+    jq \
+    snapd \
+    flatpak
 
   add_message "${GREEN}Prerequisite dependencies installed.${RESET}"
 }
@@ -166,7 +168,6 @@ function apt-install() {
   sudo apt-get install -y \
     google-chrome-stable \
     firefox \
-    snapd \
     freerdp2-x11 \
     ghostwriter \
     git \
@@ -204,6 +205,23 @@ function snap-install() {
   add_message "${GREEN}All Snap packages installed.${RESET}${YELLOW}${BOLD} You might need to logout/login to see the changes.${RESET}"
 }
 
+
+function flatpak-install() {
+  declare -a FLATS=("us.zoom.Zoom")
+
+  for pkg in "${FLATS[@]}"
+  do
+    sudo flatpak install -y flathub $pkg
+  done
+
+  # Small fix for zoom on wayland
+  sudo flatpak override --env=GDK_BACKEND=wayland us.zoom.Zoom
+  sudo flatpak override --env=XDG_CURRENT_DESKTOP=GNOME us.zoom.Zoom
+  sudo flatpak override --socket=wayland us.zoom.Zoom
+
+  add_message "${GREEN}All Flatpak packages installed.${RESET}${YELLOW}${BOLD} You might need to logout/login to see the changes.${RESET}"
+}
+
 function docker-compose() {
   COMPOSE_RELEASE=$(curl --silent "https://api.github.com/repos/docker/compose/releases/latest" | grep -Po '"tag_name": "\K.*?(?=")')
 
@@ -223,16 +241,6 @@ function p4merge() {
   sudo ln -f -s $P4_INSTALL_DIR/bin/p4merge /usr/bin/p4merge
 
   add_message "${GREEN}P4Merge installed.${RESET}"
-}
-
-function zoom() {
-  DOWNLOAD_DIR=/tmp
-  ZOOM_FILE=zoom_amd64.deb
-  ZOOM_FILEPATH=$DOWNLOAD_DIR/$ZOOM_FILE
-  wget -O $ZOOM_FILEPATH "https://zoom.us/client/latest/${ZOOM_FILE}"
-  sudo apt install -y $ZOOM_FILEPATH
-
-  add_message "${GREEN}Zoom installed.${RESET}"
 }
 
 function configure() {
