@@ -8,7 +8,7 @@ YELLOW=$(tput setaf 3)
 RESET=$(tput sgr0)
 RELEASE=$(lsb_release -cs)
 
-declare -a AVAILABLE_STEPS=("dist-upgrade" "install-prerequisite" "add-ppa" "apt-install" "snap-install" "flatpak-install" "docker-compose" "p4merge" "configure" "install-gnome-modules")
+declare -a AVAILABLE_STEPS=("dist-upgrade" "install-prerequisite" "add-ppa" "apt-install" "snap-install" "flatpak-install" "docker-compose" "p4merge" "displaylink" "configure" "install-gnome-modules")
 declare -a MESSAGES=()
 
 function add_message() {
@@ -241,6 +241,17 @@ function p4merge() {
   sudo ln -f -s $P4_INSTALL_DIR/bin/p4merge /usr/bin/p4merge
 
   add_message "${GREEN}P4Merge installed.${RESET}"
+}
+
+function displaylink() {
+  DOWNLOAD_DIR=/tmp/displaylink
+  sudo rm -R $DOWNLOAD_DIR
+  git clone https://github.com/AdnanHodzic/displaylink-debian.git $DOWNLOAD_DIR
+  pushd $DOWNLOAD_DIR
+  sudo ./displaylink-debian.sh
+  popd
+
+  add_message "${GREEN}DisplayLink driver installed.${RESET}"
 }
 
 function configure() {
