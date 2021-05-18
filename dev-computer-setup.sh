@@ -208,10 +208,13 @@ function snap-install() {
 
 function flatpak-install() {
   declare -a FLATS=("us.zoom.Zoom")
+  
+  # Add flathub remote if missing
+  sudo flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
 
   for pkg in "${FLATS[@]}"
   do
-    sudo flatpak install -y $pkg
+    sudo flatpak install -y flathub $pkg
   done
 
   # Small fix for zoom on wayland
