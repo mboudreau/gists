@@ -199,7 +199,7 @@ function snap-install() {
     sudo snap install $pkg
   done
 
-  echo -e "# set PATH to include /snap/bin\nPATH=\"/snap/bin:\$PATH\"" >>~/.profile
+  echo -e "# set PATH to include /snap/bin\nPATH=\"/snap/bin:\$PATH\"" >> ~/.profile
   source ~/.profile
 
   add_message "${GREEN}All Snap packages installed.${RESET}${YELLOW}${BOLD} You might need to logout/login to see the changes.${RESET}"
@@ -259,13 +259,16 @@ function displaylink() {
 
 function configure() {
   # Increasing file watchers & restarting system controller
+  echo "${YELLOW}Increasing file watcher maximum...${RESET}"
   echo "fs.inotify.max_user_watches = 524288" | sudo tee /etc/sysctl.d/90-file-watchers.conf
   sudo sysctl -p --system
 
   # Adding user to docker group
+  echo "${YELLOW}Adding user to docker group...${RESET}"
   sudo usermod -aG docker $USER
 
   # Adding git config
+  echo "${YELLOW}Setting up Git global config...${RESET}"
   read -rp 'Your Name: ' gitname
   git config --global user.name "${gitname}"
   read -rp 'Your Email: ' gitemail
@@ -284,7 +287,7 @@ function configure() {
   git config --global alias.all '!f() { ls -R -d */.git | sed 's,\/.git,,' | xargs -P10 -I{} git -C {} $@; }; f'
 
   # Adding git global ignore file
-  echo ".idea/" >>~/.gitignore
+  echo ".idea/" >> ~/.gitignore
 
   add_message "${GREEN}System has been configured.${RESET}"
 }
