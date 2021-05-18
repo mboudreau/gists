@@ -248,7 +248,7 @@ function p4merge() {
 
 function displaylink() {
   DOWNLOAD_DIR=/tmp/displaylink
-  sudo rm -R $DOWNLOAD_DIR
+  [[ -f $DOWNLOAD_DIR ]] && sudo rm -R $DOWNLOAD_DIR
   git clone https://github.com/AdnanHodzic/displaylink-debian.git $DOWNLOAD_DIR
   pushd $DOWNLOAD_DIR
   sudo ./displaylink-debian.sh
