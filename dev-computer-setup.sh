@@ -211,7 +211,7 @@ function flatpak-install() {
 
   for pkg in "${FLATS[@]}"
   do
-    sudo flatpak install -y flathub $pkg
+    sudo flatpak install -y $pkg
   done
 
   # Small fix for zoom on wayland
