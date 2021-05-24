@@ -8,7 +8,7 @@ YELLOW=$(tput setaf 3)
 RESET=$(tput sgr0)
 RELEASE=$(lsb_release -cs)
 
-declare -a AVAILABLE_STEPS=("dist-upgrade" "install-prerequisite" "add-ppa" "apt-install" "snap-install" "flatpak-install" "docker-compose" "p4merge" "displaylink" "configure" "install-gnome-modules")
+declare -a AVAILABLE_STEPS=("dist-upgrade" "install-prerequisite" "add-ppa" "apt-install" "snap-install" "flatpak-install" "volta-install" "docker-compose" "p4merge" "displaylink" "configure" "install-gnome-modules")
 declare -a MESSAGES=()
 
 function add_message() {
@@ -84,6 +84,10 @@ function install-prerequisite() {
     jq \
     snapd \
     flatpak
+  
+  # Install Volta
+  curl https://get.volta.sh | bash
+  source ~/.profile
 
   add_message "${GREEN}Prerequisite dependencies installed.${RESET}"
 }
@@ -140,12 +144,6 @@ function add-ppa() {
   # OIBAF VIDEO DRIVERS
   add-apt ppa:oibaf/graphics-drivers
 
-  # NODE & NPM & YARN
-  add-apt-keyfile https://deb.nodesource.com/gpgkey/nodesource.gpg.key
-  add-apt-string node "deb https://deb.nodesource.com/node_12.x $RELEASE main"
-  add-apt-keyfile https://dl.yarnpkg.com/debian/pubkey.gpg
-  add-apt-string yarn "deb https://dl.yarnpkg.com/debian/ stable main"
-
   # VIRTUALBOX
   add-apt-keyfile https://www.virtualbox.org/download/oracle_vbox_2016.asc
   add-apt-keyfile https://www.virtualbox.org/download/oracle_vbox.asc
@@ -178,8 +176,6 @@ function apt-install() {
     libreoffice \
     inkscape \
     vlc \
-    nodejs \
-    yarn \
     openssh-server \
     gnome-tweaks \
     virtualbox-6.1 \
@@ -205,7 +201,6 @@ function snap-install() {
   add_message "${GREEN}All Snap packages installed.${RESET}${YELLOW}${BOLD} You might need to logout/login to see the changes.${RESET}"
 }
 
-
 function flatpak-install() {
   declare -a FLATS=("us.zoom.Zoom")
   
@@ -223,6 +218,17 @@ function flatpak-install() {
   sudo flatpak override --socket=wayland us.zoom.Zoom
 
   add_message "${GREEN}All Flatpak packages installed.${RESET}${YELLOW}${BOLD} You might need to logout/login to see the changes.${RESET}"
+}
+
+function volta-install() {
+  declare -a PACKAGES=("node" "yarn")
+  
+  for pkg in "${PACKAGES[@]}"
+  do
+    volta install $pkg
+  done
+
+  add_message "${GREEN}All Volta packages installed.${RESET}${YELLOW}${BOLD}"
 }
 
 function docker-compose() {
