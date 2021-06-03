@@ -8,7 +8,7 @@ YELLOW=$(tput setaf 3)
 RESET=$(tput sgr0)
 RELEASE=$(lsb_release -cs)
 
-declare -a AVAILABLE_STEPS=("dist-upgrade" "install-prerequisite" "add-ppa" "apt-install" "snap-install" "flatpak-install" "volta-install" "docker-compose" "p4merge" "displaylink" "configure" "install-gnome-modules")
+declare -a AVAILABLE_STEPS=("dist-upgrade" "install-prerequisite" "add-ppa" "apt-install" "snap-install" "flatpak-install" "volta-install" "docker-compose" "p4merge" "displaylink" "install-autocpufreq" "configure" "install-gnome-modules")
 declare -a MESSAGES=()
 
 function add_message() {
@@ -188,7 +188,7 @@ function apt-install() {
 }
 
 function snap-install() {
-  declare -a SNAPS=("postman" "ngrok" "--classic dotnet-sdk" "--classic slack" "--classic webstorm" "--classic intellij-idea-ultimate" "--classic rider" "--classic sublime-text" "--beta authy" "auto-cpufreq")
+  declare -a SNAPS=("postman" "ngrok" "--classic dotnet-sdk" "--classic slack" "--classic webstorm" "--classic intellij-idea-ultimate" "--classic rider" "--classic sublime-text" "--beta authy")
 
   for pkg in "${SNAPS[@]}"
   do
@@ -306,6 +306,14 @@ function install-gnome-modules() {
     echo "$link"
     firefox "$link" &
   done
+}
+
+function install-autocpufreq() {
+  sudo git clone https://github.com/AdnanHodzic/auto-cpufreq.git /usr/src/auto-cpufreq
+  sudo /usr/src/auto-cpufreq/auto-cpufreq-installer --install
+  sudo auto-cpufreq --install
+  
+  add_message "${GREEN}Auto-cpufreq daemon has been installed.${RESET}"
 }
 
 for step in "${STEPS[@]}"; do
