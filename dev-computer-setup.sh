@@ -188,7 +188,7 @@ function apt-install() {
 }
 
 function snap-install() {
-  declare -a SNAPS=("postman" "ngrok" "--classic dotnet-sdk" "--classic slack" "--classic webstorm" "--classic intellij-idea-ultimate" "--classic rider" "--classic sublime-text" "--beta authy")
+  declare -a SNAPS=("postman" "ngrok" "--classic dotnet-sdk" "--classic slack" "--classic webstorm" "--classic intellij-idea-ultimate" "--classic rider" "--classic sublime-text" "--beta authy" "auto-cpufreq")
 
   for pkg in "${SNAPS[@]}"
   do
