@@ -152,6 +152,9 @@ function add-ppa() {
   # BALENA ETCHER
   # add-apt-string etcher "deb https://deb.etcher.io stable etcher"
   # add-apt-key 379CE192D401AB61
+  
+  # GTHUMB
+  add-apt ppa:dhor/myway
 
   # UPDATE CACHE
   sudo apt-get update
