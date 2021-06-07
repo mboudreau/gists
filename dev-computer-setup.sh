@@ -181,7 +181,8 @@ function apt-install() {
     virtualbox-6.1 \
     ffmpeg \
     docker-ce docker-ce-cli containerd.io \
-    awscli
+    awscli \
+    gthumb
 #    balena-etcher-electron
 
   add_message "${GREEN}APT packages installed.${RESET}"
