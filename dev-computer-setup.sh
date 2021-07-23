@@ -8,7 +8,7 @@ YELLOW=$(tput setaf 3)
 RESET=$(tput sgr0)
 RELEASE=$(lsb_release -cs)
 
-declare -a AVAILABLE_STEPS=("dist-upgrade" "install-prerequisite" "add-ppa" "apt-install" "snap-install" "flatpak-install" "volta-install" "docker-compose" "p4merge" "displaylink" "install-autocpufreq" "configure" "install-gnome-modules")
+declare -a AVAILABLE_STEPS=("dist-upgrade" "install-prerequisite" "add-ppa" "apt-install" "snap-install" "flatpak-install" "volta-install" "docker-compose" "p4merge" "install-autocpufreq" "configure" "install-gnome-modules")
 declare -a MESSAGES=()
 
 function add_message() {
