@@ -282,6 +282,7 @@ function configure() {
   git config --global user.name "${gitname}"
   read -rp 'Your Email: ' gitemail
   git config --global user.email "${gitemail}"
+  git config --global push.default current
 
   # Set git merge config
   git config --global merge.tool p4merge
