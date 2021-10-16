@@ -155,9 +155,6 @@ function add-ppa() {
   
   # GTHUMB
   add-apt ppa:dhor/myway
-  
-  # INKSCAPE
-  add-apt ppa:inkscape.dev/stable
 
   # UPDATE CACHE
   sudo apt-get update
@@ -187,8 +184,7 @@ function apt-install() {
     ffmpeg \
     docker-ce docker-ce-cli containerd.io \
     awscli \
-    gthumb \
-    inkscape
+    gthumb
 #    balena-etcher-electron
 
   add_message "${GREEN}APT packages installed.${RESET}"
@@ -209,7 +205,7 @@ function snap-install() {
 }
 
 function flatpak-install() {
-  declare -a FLATS=("us.zoom.Zoom")
+  declare -a FLATS=("us.zoom.Zoom" "org.inkscape.Inkscape")
   
   # Add flathub remote if missing
   sudo flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
