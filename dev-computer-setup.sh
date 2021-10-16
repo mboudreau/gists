@@ -155,6 +155,9 @@ function add-ppa() {
   
   # GTHUMB
   add-apt ppa:dhor/myway
+  
+  # INKSCAPE
+  add-apt ppa:inkscape.dev/stable
 
   # UPDATE CACHE
   sudo apt-get update
@@ -184,14 +187,15 @@ function apt-install() {
     ffmpeg \
     docker-ce docker-ce-cli containerd.io \
     awscli \
-    gthumb
+    gthumb \
+    inkscape
 #    balena-etcher-electron
 
   add_message "${GREEN}APT packages installed.${RESET}"
 }
 
 function snap-install() {
-  declare -a SNAPS=("postman" "ngrok" "--classic dotnet-sdk" "--classic slack" "--classic webstorm" "--classic intellij-idea-ultimate" "--classic rider" "--classic sublime-text" "--beta authy" "inkscape")
+  declare -a SNAPS=("postman" "ngrok" "--classic dotnet-sdk" "--classic slack" "--classic webstorm" "--classic intellij-idea-ultimate" "--classic rider" "--classic sublime-text" "--beta authy")
 
   for pkg in "${SNAPS[@]}"
   do
