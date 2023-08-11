@@ -191,7 +191,7 @@ function apt-install() {
 }
 
 function snap-install() {
-  declare -a SNAPS=("postman" "ngrok" "--classic dotnet-sdk" "--classic webstorm" "--classic intellij-idea-ultimate" "--classic rider" "--classic datagrip" "--classic sublime-text" "--beta authy")
+  declare -a SNAPS=("slack" "insomnia" "ngrok" "--classic dotnet-sdk" "--classic webstorm" "--classic intellij-idea-ultimate" "--classic rider" "--classic datagrip" "--classic sublime-text" "--beta authy")
 
   for pkg in "${SNAPS[@]}"
   do
@@ -205,7 +205,7 @@ function snap-install() {
 }
 
 function flatpak-install() {
-  declare -a FLATS=("us.zoom.Zoom" "org.inkscape.Inkscape" "com.slack.Slack")
+  declare -a FLATS=("us.zoom.Zoom" "org.inkscape.Inkscape")
   
   # Add flathub remote if missing
   sudo flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
