@@ -7,7 +7,7 @@ YELLOW=$(tput setaf 3)
 RESET=$(tput sgr0)
 
 DIRECTORY=~/.local/bin
-declare -a SCRIPTS=("create-timelapse.sh" "dev-computer-setup.sh" "get-temporary-token.sh" "install-docker.sh" "install-hashicorp.sh" "install-p4merge-git.sh")
+declare -a SCRIPTS=("create-timelapse.sh" "dev-computer-setup.sh" "get-temporary-token.sh" "install-docker.sh" "install-hashicorp.sh" "install-p4merge-git.sh" "docker-delete-all-the-things.sh")
 
 function show_help {
     echo "${GREEN}${BOLD}Install Gist Scripts Locally${RESET}"
