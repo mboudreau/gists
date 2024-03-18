@@ -191,7 +191,7 @@ function apt-install() {
 }
 
 function snap-install() {
-  declare -a SNAPS=("slack" "insomnia" "ngrok" "--classic dotnet-sdk" "--classic webstorm" "--classic intellij-idea-ultimate" "--classic rider" "--classic datagrip" "--classic sublime-text" "--beta authy")
+  declare -a SNAPS=("slack" "insomnia" "ngrok" "--classic dotnet-sdk" "--classic webstorm" "--classic intellij-idea-ultimate" "--classic rider" "--classic datagrip" "--classic sublime-text")
 
   for pkg in "${SNAPS[@]}"
   do
